@@ -3,6 +3,7 @@ Retrieved for this local website prototype on 2026-10-07.
 
 logo.png: https://www.facebook.com/photo/?fbid=601272335460538
 powerlifting.jpg: https://www.facebook.com/photo.php?fbid=578843301018613
+training.jpg: https://www.facebook.com/photo.php?fbid=578844304351846 (public Kilo Culture photo, April 20, 2023)
 community.jpg: Kilo Culture public profile cover photo (retrieved via page asset inventory)
 team-results.jpg: Kilo Culture public post, Mindanao Equipped Powerlifting Championships 2025 (retrieved via page asset inventory)
 

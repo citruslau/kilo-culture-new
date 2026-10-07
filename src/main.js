@@ -6,7 +6,7 @@ const arrow = '<span aria-hidden="true">↗</span>';
 const base = import.meta.env.BASE_URL;
 
 const trainingOptions = [
-  { title: 'Powerlifting', label: 'Squat. Bench. Deadlift.', description: 'Make time for the big three. A space for deliberate training, steady progress, and the people who understand why you keep showing up.', image: `${base}images/powerlifting.jpg`, alt: 'A Kilo Culture lifter squatting with spotters at a powerlifting event' },
+  { title: 'Powerlifting', label: 'Squat. Bench. Deadlift.', description: 'Make time for the big three. A space for deliberate training, steady progress, and the people who understand why you keep showing up.', image: `${base}images/training.jpg`, alt: 'A Kilo Culture lifter in pink knee sleeves squatting with spotters' },
   { title: 'Strength foundations', label: 'Your first rep starts here.', description: 'New to the bar? This sample training option introduces the basics, building confidence with each session. Ask the team about available support.', image: `${base}images/community.jpg`, alt: 'The Kilo Culture community celebrating together' },
   { title: 'Meet preparation', label: 'From the gym to the platform.', description: 'A sample pathway for lifters with a meet in mind. Train with purpose, find your rhythm, and be part of a team that celebrates the effort.', image: `${base}images/team-results.jpg`, alt: 'Kilo Culture team results from the 2025 Mindanao Equipped Powerlifting Championships' },
 ];
@@ -78,13 +78,15 @@ document.addEventListener('keydown', event => { if (event.key === 'Escape') clos
 document.querySelectorAll('.training-trigger').forEach(button => {
   button.addEventListener('click', () => {
     const index = Number(button.dataset.training);
+    const expanded = button.getAttribute('aria-expanded') !== 'true';
     document.querySelectorAll('.training-trigger').forEach((trigger, triggerIndex) => {
-      const selected = index === triggerIndex;
+      const selected = expanded && index === triggerIndex;
       trigger.setAttribute('aria-expanded', String(selected));
       trigger.querySelector('span').textContent = selected ? '−' : '+';
       trigger.closest('.training-option').classList.toggle('selected', selected);
       document.getElementById(`training-panel-${triggerIndex}`).hidden = !selected;
     });
+    if (!expanded) return;
     const image = document.querySelector('#training-image');
     image.src = trainingOptions[index].image;
     image.alt = trainingOptions[index].alt;
