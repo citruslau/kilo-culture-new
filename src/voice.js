@@ -21,7 +21,9 @@ export function setupVoiceAssistant(root, { publicKey, assistantId }) {
     },
     async loadClient() {
       // Load the voice SDK only when a visitor chooses to talk.
-      const { default: Vapi } = await import('@vapi-ai/web');
+      const sdk = await import('@vapi-ai/web');
+      // The CommonJS SDK can have a nested default after production bundling.
+      const Vapi = typeof sdk.default === 'function' ? sdk.default : sdk.default.default;
       return new Vapi(publicKey);
     },
     onChange({ phase, message }) {
