@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { runInNewContext } from 'node:vm';
+import { createContext, SourceTextModule } from 'node:vm';
 
 const base = '/kilo-culture-new/';
 const html = readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8');
@@ -13,6 +13,17 @@ function assertAsset(url) {
   return file;
 }
 
+async function runEntry(entry, document) {
+  // Execute the build as an ES module, just as the browser does.
+  const file = assertAsset(entry);
+  const module = new SourceTextModule(readFileSync(file, 'utf8'), {
+    context: createContext({ document }),
+    initializeImportMeta(meta) { meta.url = file.href; },
+  });
+  await module.link(() => { throw new Error('Unexpected eager module dependency'); });
+  await module.evaluate();
+}
+
 test('built entry points and favicon resolve within the GitHub Pages site', () => {
   const urls = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(match => match[1]);
   assert.ok(urls.some(url => url.endsWith('.js')), 'Page must load a built JavaScript entry');
@@ -20,17 +31,17 @@ test('built entry points and favicon resolve within the GitHub Pages site', () =
   urls.forEach(assertAsset);
 });
 
-test('built JavaScript renders page content with working image paths', () => {
+test('built JavaScript renders page content with working image paths', async () => {
   const entry = html.match(/<script[^>]+src="([^"]+)"/)[1];
   const app = { innerHTML: '' };
   const element = { addEventListener() {} };
   const document = {
     createElement: () => ({ relList: { supports: () => true } }),
-    querySelector: selector => selector === '#app' ? app : element,
+    querySelector: selector => selector === '.voice-assistant' ? null : selector === '#app' ? app : element,
     querySelectorAll: () => [],
     addEventListener() {},
   };
-  runInNewContext(readFileSync(assertAsset(entry), 'utf8'), { document });
+  await runEntry(entry, document);
   assert.ok(app.innerHTML.includes('STRONGER.'), 'JavaScript must render the gym page');
   const images = [...app.innerHTML.matchAll(/<img[^>]+src="([^"]+)"/g)];
   assert.ok(images.length > 0, 'Page must render its images');
@@ -48,7 +59,7 @@ test('built font URLs resolve within the GitHub Pages site', () => {
   fonts.forEach(match => assertAsset(match[1]));
 });
 
-test('training panels collapse, reopen, and switch with matching controls', () => {
+test('training panels collapse, reopen, and switch with matching controls', async () => {
   const panels = Array.from({ length: 3 }, (_, index) => ({ hidden: index !== 0 }));
   const buttons = panels.map((panel, index) => {
     const attributes = { 'aria-expanded': String(!panel.hidden) };
@@ -68,13 +79,13 @@ test('training panels collapse, reopen, and switch with matching controls', () =
   const element = { addEventListener() {} };
   const document = {
     createElement: () => ({ relList: { supports: () => true } }),
-    querySelector: selector => selector === '#training-image' ? image : selector === '#training-caption' ? caption : element,
+    querySelector: selector => selector === '.voice-assistant' ? null : selector === '#training-image' ? image : selector === '#training-caption' ? caption : element,
     querySelectorAll: selector => selector === '.training-trigger' ? buttons : [],
     getElementById: id => panels[Number(id.replace('training-panel-', ''))],
     addEventListener() {},
   };
   const entry = html.match(/<script[^>]+src="([^"]+)"/)[1];
-  runInNewContext(readFileSync(assertAsset(entry), 'utf8'), { document });
+  await runEntry(entry, document);
 
   function assertState(openIndex) {
     buttons.forEach((button, index) => {

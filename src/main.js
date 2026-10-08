@@ -1,5 +1,6 @@
 import '../tokens.css';
 import './style.css';
+import { setupVoiceAssistant } from './voice.js';
 
 const facebook = 'https://www.facebook.com/KiloCultureDavao';
 const arrow = '<span aria-hidden="true">↗</span>';
@@ -58,10 +59,25 @@ document.querySelector('#app').innerHTML = `
     <section class="faq section-space" aria-labelledby="faq-title"><div><h2 id="faq-title">FIRST TIME?<br>YOU'RE WELCOME.</h2><p>A few things before your first session.</p></div><div class="faq-list"><details><summary>Do I need to be a powerlifter?<span aria-hidden="true">+</span></summary><p>You can be curious about lifting without competing. Message the team about your experience and goals to find out whether the facility is a good fit.</p></details><details><summary>Can I drop by and have a look?<span aria-hidden="true">+</span></summary><p>It's a private training facility, so get in touch before your visit. The team can confirm when someone will be available to show you around.</p></details><details><summary>When can members train?<span aria-hidden="true">+</span></summary><p>Kilo Culture's public page lists 24/7 member access. Ask the team about access arrangements and visitor availability before arriving.</p></details><details><summary>Are these the current rates?<span aria-hidden="true">+</span></summary><p>The displayed rates and training options are sample content for this local website prototype. Contact Kilo Culture to confirm current pricing and availability.</p></details></div></section>
 
     <section class="visit" id="visit" aria-labelledby="visit-title"><div class="visit-copy"><p class="location-label">SEE YOU IN DAVAO.</p><h2 id="visit-title">YOUR NEXT REP<br>STARTS HERE.</h2><p>100 Cordillera Street, Central Park Subdivision,<br>Brgy. Talomo, Davao City, Philippines</p><a class="button button-primary" href="${facebook}" target="_blank" rel="noopener noreferrer">Visit our Facebook page ${arrow}</a><div class="contact-links"><a href="tel:+639950962050">0995 096 2050 ${arrow}</a><a href="mailto:kiloculturedavao@gmail.com">Send us an email ${arrow}</a></div><a class="text-link map-link" href="https://www.google.com/maps/search/?api=1&query=Kilo+Culture+100+Cordillera+Street+Davao+City" target="_blank" rel="noopener noreferrer">Find Kilo Culture on Maps ${arrow}</a></div><div class="visit-mark" aria-hidden="true"><img src="${base}images/logo.png" alt="" width="200" height="200" /><span>THE BAR BRINGS<br>US TOGETHER.</span></div></section>
+    <section class="voice-assistant" aria-labelledby="voice-title">
+      <div><p class="location-label">A QUESTION BEFORE YOUR FIRST REP?</p><h2 id="voice-title">TALK TO KILO CULTURE.</h2><p>Ask our AI assistant about memberships, member access, and finding the gym.</p></div>
+      <div class="voice-controls">
+        <p id="voice-status" data-voice-status role="status" aria-live="polite" aria-atomic="true">Ready when you are.</p>
+        <div class="voice-actions"><button type="button" class="button button-primary" data-voice-start aria-describedby="voice-privacy voice-status">Talk to Kilo Culture</button><button type="button" class="button voice-end" data-voice-end hidden>End call</button></div>
+        <p class="voice-privacy" id="voice-privacy">Starting a call uses your microphone and sends your voice to Vapi and its service providers to respond. Calls may be recorded or transcribed according to the assistant's settings. Avoid sharing sensitive information.</p>
+        <a class="text-link" href="#visit">Prefer to contact the team? ${arrow}</a>
+      </div>
+    </section>
   </main>
   <footer class="site-footer"><a class="footer-brand" href="#home">KILO CULTURE</a><p>Powerlifting. People. Davao.</p><div><a href="${facebook}" target="_blank" rel="noopener noreferrer">Facebook ${arrow}</a><a href="#home">Back to top ↑</a></div><small>Local website preview · Sample memberships and training options</small></footer>
   <dialog class="membership-dialog" aria-labelledby="dialog-title"><button class="dialog-close" aria-label="Close membership preview">×</button><p class="plan-label">MEMBERSHIP PREVIEW</p><h2 id="dialog-title"></h2><p class="dialog-description"></p><div class="dialog-detail"><span>Sample rate</span><strong id="dialog-price"></strong></div><p>This is a local design preview. Contact the team to confirm current rates, access, and availability.</p><a class="button button-primary" href="#visit" id="dialog-visit">View contact details ${arrow}</a></dialog>
 `;
+
+const voiceRoot = document.querySelector('.voice-assistant');
+if (voiceRoot) setupVoiceAssistant(voiceRoot, {
+  publicKey: import.meta.env.VITE_VAPI_PUBLIC_KEY,
+  assistantId: import.meta.env.VITE_VAPI_ASSISTANT_ID,
+});
 
 const menuToggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#primary-nav');

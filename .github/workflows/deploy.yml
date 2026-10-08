@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build and test
+        env:
+          VITE_VAPI_PUBLIC_KEY: ${{ vars.VITE_VAPI_PUBLIC_KEY }}
+          VITE_VAPI_ASSISTANT_ID: ${{ vars.VITE_VAPI_ASSISTANT_ID }}
         run: npm test
       - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
